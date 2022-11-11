@@ -1,5 +1,6 @@
 (ns hobbit-hitter.core
-  (:gen-class))
+  (:gen-class) 
+  (:require clojure.string))
 
 (defn -main
   "I don't do a whole lot ... yet."
@@ -25,3 +26,22 @@
                              {:name "left-lower-leg" :size 3}
                              {:name "left-achilles" :size 1}
                              {:name "left-foot" :size 2}])
+
+(defn matching-part
+  [part]
+  {:name (clojure.string/replace (:name part) #"^left-" "right-")
+   :size (:size part)})
+
+(defn symmetrize-body-parts
+  "Expects a seq of maps that have a :name and :size"
+  [asym-body-parts]
+  (loop [remaining-asym-parts asym-body-parts
+         final-body-parts []]
+    (if (empty? remaining-asym-parts)
+      final-body-parts
+      (let [[part & remaining] remaining-asym-parts]
+        (recur remaining
+               (into final-body-parts
+                     (set [part (matching-part part)])))))))
+
+;; (symmetrize-body-parts asym-hobbit-body-parts)
