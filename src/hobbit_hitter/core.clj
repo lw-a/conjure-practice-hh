@@ -5,7 +5,7 @@
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
-  (println "Hello, World!"))
+  )
 
 (def asym-hobbit-body-parts [{:name "head" :size 3}
                              {:name "left-eye" :size 1}
@@ -44,6 +44,8 @@
 ;;                (into final-body-parts
 ;;                      (set [part (matching-part part)])))))))
 
+;; (symmetrize-body-parts asym-hobbit-body-parts)
+
 (defn better-symmetrize-body-parts
   "Expects a seq of maps that have a :name and :size"
   [asym-body-parts]
@@ -52,4 +54,17 @@
           []
           asym-body-parts))
 
-;; (symmetrize-body-parts asym-hobbit-body-parts)
+(defn hit
+  [asym-body-parts]
+  (let [sym-parts (better-symmetrize-body-parts asym-body-parts)
+        body-part-size-sum (reduce + (map :size sym-parts))
+        target (rand body-part-size-sum)]
+     (loop [[part & remaining] sym-parts
+             accumulated-size (:size part)]
+        (if (> accumulated-size target)
+          part
+          (recur remaining (+ accumulated-size (:size (first remaining))))))))
+
+(println (hit asym-hobbit-body-parts))
+(println (hit asym-hobbit-body-parts))
+(println (hit asym-hobbit-body-parts))
